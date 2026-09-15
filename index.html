@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>パスフレーズ生成</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      padding: 32px 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      text-align: center;
+    }
+    #result {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 24px 0;
+      padding: 16px;
+      background: #f1f3f5;
+      border-radius: 8px;
+      word-break: break-all;
+      min-height: 1.5em;
+      line-height: 1.4;
+    }
+    button {
+      background-color: #228be6;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:active {
+      background-color: #1c7ed6;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <button id="genBtn">パスフレーズ生成</button>
+    <div id="result">ボタンを押してください</div>
+  </div>
+
+  <script>
+    // Pythonスクリプトで抽出した単語リストをここに直接配置
+// Generated 272 clean Japanese words for passphrase
+const WORDS = ["aida", "aji", "aka", "aki", "amari", "ame", "ane", "ani", "ao", "asa", "ashita", "asobi", "asu", "atama", "bai", "ban", "benri", "betsu", "bunka", "chichi", "chikaku", "chikara", "chiri", "chizu", "daibu", "daiji", "dame", "deguchi", "denki", "denwa", "eda", "eki", "fuben", "fuku", "fune", "futatsu", "futon", "fuyu", "genki", "gogo", "gohan", "gomi", "gozen", "guai", "hagaki", "haha", "hako", "han", "hana", "hanami", "hanashi", "hare", "haru", "hashi", "hayashi", "hen", "henji", "heta", "heya", "hidari", "higashi", "hikari", "hima", "hiru", "hiruma", "hito", "hitotsu", "hodo", "hoka", "hon", "hoshi", "ie", "igaku", "ikaga", "ike", "iken", "ikura", "ima", "imi", "inaka", "inu", "iro", "ishi", "isu", "ito", "itsutsu", "iya", "jibiki", "jibun", "jidai", "jikan", "jiko", "jishin", "jiten", "kaban", "kabe", "kabin", "kado", "kagaku", "kagami", "kagi", "kaigi", "kaiwa", "kaji", "kami", "kanai", "kanji", "kao", "karada", "kasa", "kata", "katachi", "kawari", "kaze", "kazoku", "kesa", "keshiki", "kibun", "kikai", "kiken", "kimochi", "kimono", "kinu", "kisetsu", "kisoku", "kita", "kodomo", "koe", "kokoro", "kome", "kondo", "kotae", "koto", "kotoba", "kotori", "kotoshi", "kubi", "kuchi", "kumo", "kuni", "kuro", "kuruma", "kusa", "kusuri", "kutsu", "machi", "mado", "mae", "majime", "manga", "mawari", "megane", "michi", "midori", "migi", "mimi", "minami", "minato", "mise", "miso", "mizu", "momen", "mon", "mono", "mori", "mukashi", "mura", "muri", "mushi", "musuko", "musume", "naka", "namae", "nanatsu", "natsu", "nedan", "neko", "netsu", "niku", "nimotsu", "nioi", "nishi", "niwa", "nodo", "odori", "okage", "okane", "okashi", "omote", "onaka", "onna", "oto", "otoko", "otona", "oya", "rekishi", "rusu", "saifu", "saigo", "saka", "sakan", "sakana", "saki", "sebiro", "sekai", "seki", "sen", "senaka", "shiai", "shigoto", "shikata", "shiken", "shima", "shimin", "shio", "shiro", "shita", "shitagi", "shizuka", "soba", "sobo", "sofu", "sora", "soto", "suki", "sumi", "suna", "suri", "tabako", "tamago", "tana", "tashika", "tatami", "tate", "tegami", "ten", "tenki", "tera", "tokoro", "tokoya", "tonari", "tori", "toshi", "tsugi", "tsuki", "tsukue", "tsuma", "tsumori", "uchi", "ude", "ue", "umi", "ura", "uriba", "ushiro", "uso", "uta", "uwagi", "wake", "yama", "yaoya", "yasai", "yasumi", "yoko", "yoru", "yoyaku", "yubi", "yubiwa", "yuki", "yume", "zehi", "zenbu"];
+
+function generatePassphrase(wordCount = 4, separator = '.') {
+  const randomValues = new Uint32Array(wordCount + 1);
+  crypto.getRandomValues(randomValues);
+
+  const chosen = [];
+  const dictSize = WORDS.length;
+  for (let i = 0; i < wordCount; i++) {
+    const word = WORDS[randomValues[i] % dictSize];
+    // 先頭1文字を大文字化し、残りの文字列と結合
+    const capitalized = word.charAt(0).toUpperCase() + word.slice(1);
+    chosen.push(capitalized);
+  }
+
+  const num = (randomValues[wordCount] % 10000).toString().padStart(4, '0');
+  return `${chosen.join(separator)}${separator}${num}`;
+}
+
+    document.getElementById('genBtn').addEventListener('click', () => {
+      document.getElementById('result').textContent = generatePassphrase(4);
+    });
+  </script>
+</body>
+</html>
